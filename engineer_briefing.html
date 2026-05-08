@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hana法律事務所 Notion開発：エンジニア向け引き継ぎ資料</title>
+<style>
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{font-family:'Hiragino Sans','Helvetica Neue',Arial,sans-serif; background:#f5f6fa; color:#222; line-height:1.75; font-size:14px;}
+  .page{max-width:860px; margin:40px auto; background:#fff; border-radius:12px; padding:48px 56px; box-shadow:0 2px 16px rgba(0,0,0,.08);}
+  h1{font-size:22px; color:#1a237e; border-bottom:3px solid #3f51b5; padding-bottom:12px; margin-bottom:28px; line-height:1.4;}
+  h2{font-size:16px; color:#283593; margin:36px 0 12px; padding:8px 14px; background:#e8eaf6; border-left:4px solid #3f51b5; border-radius:4px;}
+  h3{font-size:14px; color:#37474f; margin:24px 0 8px; font-weight:700;}
+  p{margin:8px 0; color:#444;}
+  blockquote{background:#f3f4f6; border-left:4px solid #90a4ae; padding:10px 16px; border-radius:4px; margin:12px 0; color:#546e7a; font-style:italic;}
+  table{width:100%; border-collapse:collapse; margin:16px 0; font-size:13px;}
+  th{background:#3f51b5; color:#fff; padding:9px 12px; text-align:left; font-weight:600;}
+  td{padding:8px 12px; border-bottom:1px solid #e0e0e0;}
+  tr:nth-child(even) td{background:#f5f6fa;}
+  tr:hover td{background:#e8eaf6;}
+  code{background:#f0f4ff; color:#1565c0; padding:2px 6px; border-radius:4px; font-family:monospace; font-size:12px;}
+  pre{background:#1e1e2e; color:#cdd6f4; padding:18px 20px; border-radius:8px; overflow-x:auto; margin:16px 0; font-size:12.5px; line-height:1.6;}
+  pre code{background:none; color:inherit; padding:0;}
+  ul,ol{margin:8px 0 8px 24px; color:#444;}
+  li{margin:4px 0;}
+  a{color:#1565c0; text-decoration:none;}
+  a:hover{text-decoration:underline;}
+  hr{border:none; border-top:1px solid #e0e0e0; margin:28px 0;}
+  .meta{color:#90a4ae; font-size:12px; margin-top:40px; text-align:right;}
+</style>
+</head>
+<body>
+<div class="page">
+<h1>Hana法律事務所 Notionシステム開発：エンジニア向け引き継ぎ資料</h1>
+<blockquote>
+<p>作成日: 2026年5月8日 / 作成者: 松本育也（PM）</p>
+</blockquote>
+<hr />
+<h2>📌 プロジェクト概要</h2>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>クライアント</td>
+<td>Hana法律事務所（不動産売買業）</td>
+</tr>
+<tr>
+<td>先方窓口</td>
+<td>渡邉代表、大東龍亮（営業部長）、高原優香（事務リーダー）</td>
+</tr>
+<tr>
+<td>対応人数</td>
+<td>12名（営業・事務）</td>
+</tr>
+<tr>
+<td>プロジェクト内容</td>
+<td>GoogleスプレッドシートによるアナログBiz業務をNotionベースの業務管理システムへ移行</td>
+</tr>
+<tr>
+<td>Notionプラン</td>
+<td>有償プラン（全員分）</td>
+</tr>
+<tr>
+<td>納品目安</td>
+<td>第10週目頃（情報連携の遅れで前後あり）</td>
+</tr>
+<tr>
+<td>無償保守</td>
+<td>納品後3ヶ月</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>🗂 現状（AS-IS）：スプレッドシート3本管理</h2>
+<h3>シート構成</h3>
+<table>
+<thead>
+<tr>
+<th>シート</th>
+<th>行数</th>
+<th>列数</th>
+<th>概要</th>
+<th>主な利用者</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>管理①</td>
+<td>~190行</td>
+<td>64列</td>
+<td>反響〜訪問前の架電管理</td>
+<td>営業 ＋ 事務（一部）</td>
+</tr>
+<tr>
+<td>管理②</td>
+<td>~1,400行</td>
+<td>80列</td>
+<td>売買案件の契約〜決済管理</td>
+<td>営業</td>
+</tr>
+<tr>
+<td>管理③</td>
+<td>~900行</td>
+<td>40列</td>
+<td>事務タスクの進捗管理</td>
+<td>事務（ジム）</td>
+</tr>
+</tbody>
+</table>
+<h3>現行業務フロー</h3>
+<pre><code>問い合わせ発生（家守る管理画面・広告媒体）
+    ↓ 手動コピー
+【管理①】反響管理
+  架電後不在 → 予約電話 → 本確後NG / 本確後物件情報NG
+                        → 査定パス → 訪問予定 / 案件化不可
+                                         ↓（媒介取得）手動で行追加
+                    ┌────────────────────┐
+                    ↓（営業）              ↓（事務）
+             【管理②】売買管理    【管理③】事務タスク管理
+              契約日調整中          01_マイソク依頼
+              → 契約済             → 02_契約書依頼
+              → 決済確定           → 03_AB締結済
+              → 決済終了           → 04_BC（仲介）締結済
+              ※リリース（離脱）
+</code></pre>
+<h3>現状の主な課題</h3>
+<ul>
+<li><strong>二重入力</strong>：同じ案件情報を管理①②③にそれぞれ手入力</li>
+<li><strong>連携不足</strong>：営業↔事務が別シートで管理→情報ズレ・入力漏れが多発</li>
+<li><strong>ChatWork依存</strong>：進捗通知・確認依頼をChatWorkで行い情報が散在</li>
+<li><strong>家守る管理画面との重複</strong>：別システムとスプレッドシートの二重管理</li>
+</ul>
+<hr />
+<h2>🚀 構築後（TO-BE）：Notionシステム設計</h2>
+<h3>Notion DB構成（6要素）</h3>
+<pre><code>【Notionワークスペース】
+
+  ① 案件管理DB（HUB）
+      ├── ↔ ② 顧客管理DB（売主・買主・司法書士等、多対多リレーション）
+      ├── ← ③ タスク管理DB（事務タスク・チェックリスト、1対多）
+      └── ← ⑥ ファイル・議事録管理（書類格納、1対多）
+
+  ④ ビュー可視化（①のビュー）
+      ├── 営業ビュー
+      ├── 事務ビュー
+      ├── カレンダービュー（決済日・契約日）
+      ├── カンバンビュー（ステータス管理）
+      └── 締切ビュー（期限切れアラート）
+
+  ⑤ KPIダッシュボード
+      └── 月次売上・成約率・媒体別件数
+</code></pre>
+<h3>ビュー設計</h3>
+<table>
+<thead>
+<tr>
+<th>ビュー</th>
+<th>主な表示内容</th>
+<th>ユーザー</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>営業ビュー</td>
+<td>担当案件リスト・ステータス・売買金額・自社利益・媒介取得日・決済予定日</td>
+<td>営業担当</td>
+</tr>
+<tr>
+<td>事務ビュー</td>
+<td>マイソク依頼状況・契約書進捗・決済チェックリスト・司法書士情報</td>
+<td>事務スタッフ</td>
+</tr>
+<tr>
+<td>カレンダービュー</td>
+<td>決済日・契約日の月次カレンダー表示</td>
+<td>全スタッフ</td>
+</tr>
+<tr>
+<td>カンバンビュー</td>
+<td>全案件のステータスをカード形式で一覧</td>
+<td>全スタッフ</td>
+</tr>
+<tr>
+<td>KPI管理ビュー</td>
+<td>月次売上・成約率・媒体別問い合わせ数</td>
+<td>代表・大東</td>
+</tr>
+</tbody>
+</table>
+<h3>権限設計（暫定）</h3>
+<ul>
+<li>基本：全12名が閲覧可能</li>
+<li>金額情報（売上・自社利益等）の閲覧制限：<strong>要確認</strong>（5/14 MTGで確定）</li>
+</ul>
+<hr />
+<h2>✅ MTGで合意済みの仕様</h2>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>内容</th>
+<th>確認日</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>6DB構成</td>
+<td>①案件②顧客③タスク④ビュー⑤KPI⑥ファイル</td>
+<td>5/8</td>
+</tr>
+<tr>
+<td>5ビュー構成</td>
+<td>営業・事務・カレンダー・カンバン・KPI</td>
+<td>5/8</td>
+</tr>
+<tr>
+<td>期日アラート</td>
+<td>締切ビューで期限切れタスクを表示</td>
+<td>5/8</td>
+</tr>
+<tr>
+<td>コミュニケーション機能</td>
+<td>Notionメンション・タスク機能でChatWork代替</td>
+<td>5/8</td>
+</tr>
+<tr>
+<td>ChatWork自動連携</td>
+<td><strong>スコープ外</strong>（混乱を避けるため）</td>
+<td>4/30</td>
+</tr>
+<tr>
+<td>家守る連携</td>
+<td><strong>スコープ外</strong>（当面は手入力継続）</td>
+<td>4/30</td>
+</tr>
+<tr>
+<td>AIチェック機能</td>
+<td><strong>スコープ外</strong>（外部AIツールが必要なため）</td>
+<td>5/8</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>❓ 未確定事項（5/14 MTGで確認予定）</h2>
+<h3>ステータス・フロー設計</h3>
+<ul>
+<li>管理①のステータス正確な順序・全種類</li>
+<li>「本確後NG」と「本確後物件情報NG」の違い</li>
+<li>管理②に入るタイミング（媒介取得確定時点でよいか）</li>
+<li>管理③のステータス04の後の完了処理</li>
+</ul>
+<h3>シート間連携・キー設計</h3>
+<ul>
+<li>管理①の「広告番号」＝管理②の「広告ID」かどうか</li>
+<li>管理①②③の識別キーの統一</li>
+<li>管理③のNotionへの移行タイミング</li>
+</ul>
+<h3>金額・権限</h3>
+<ul>
+<li>売買金額・自社利益等の閲覧制限の要否</li>
+<li>利回り・AB表面は自動計算か手入力か</li>
+</ul>
+<h3>取引形態</h3>
+<ul>
+<li>三為以外（仲介など）の取引があるかどうか</li>
+<li>ABとBCの違いによるフロー分岐の設計</li>
+</ul>
+<hr />
+<h2>📊 管理②の法的チェックリスト（8項目）</h2>
+<p>以下をNotionでも同形式（チェック＋状況メモ）で保持する想定：</p>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>要確認内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>相続登記</td>
+<td>有無・完了・状況</td>
+</tr>
+<tr>
+<td>未登記</td>
+<td>有無・完了・状況</td>
+</tr>
+<tr>
+<td>農地</td>
+<td>有無・完了・状況</td>
+</tr>
+<tr>
+<td>市街化調整区域</td>
+<td>有無・確認完了・状況</td>
+</tr>
+<tr>
+<td>根抵当権</td>
+<td>有無・確認完了・状況</td>
+</tr>
+<tr>
+<td>確定測量</td>
+<td>有無・完了・状況</td>
+</tr>
+<tr>
+<td>越境</td>
+<td>有無・完了・状況</td>
+</tr>
+<tr>
+<td>融資</td>
+<td>有無・本審査完了・状況</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>📅 スケジュール</h2>
+<table>
+<thead>
+<tr>
+<th>日付</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2026/04/30</td>
+<td>キックオフMTG（ヒアリング・課題確認）</td>
+</tr>
+<tr>
+<td>2026/05/08</td>
+<td>Notion設計案の認識合わせ・方向性確定</td>
+</tr>
+<tr>
+<td>2026/05/14</td>
+<td><strong>開発キックオフMTG</strong>（エンジニア参加・詳細要件確定）</td>
+</tr>
+<tr>
+<td>TBD</td>
+<td>Notion構築開始</td>
+</tr>
+<tr>
+<td>第10週目頃</td>
+<td>仮納品・全員レビュー</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>🔗 参考リンク</h2>
+<ul>
+<li><strong>Notion設計図解（As-Is / To-Be マッピング）</strong>：https://ikuyamatsumoto-dev.github.io/Hanaprj_notion/</li>
+<li><strong>Notionワークスペース（先方共有用）</strong>：https://www.notion.so/315b44c0b4588060b802d06fa8048bc9</li>
+</ul>
+<hr />
+<p><em>PM: 松本育也 / 営業: 中川優希 / 問い合わせ: i.matsumoto@o-en-inc.com</em></p>
+</div>
+</body>
+</html>
