@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>As-Is → To-Be｜3シートとNotion構造の対応関係</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Hiragino Sans', 'Meiryo', sans-serif;
+  background: #f4f5f8;
+  padding: 28px 24px;
+  color: #1a1a2e;
+  min-width: 1100px;
+}
+h1 { text-align:center; font-size:18px; font-weight:700; margin-bottom:4px; letter-spacing:.02em; }
+.subtitle { text-align:center; font-size:11.5px; color:#999; margin-bottom:18px; }
+
+/* 凡例 */
+.legend {
+  display:flex; justify-content:center; gap:14px; flex-wrap:wrap;
+  background:#fff; border-radius:10px; padding:9px 20px;
+  border:1px solid #e8eaed; max-width:900px; margin:0 auto 22px;
+}
+.legend-item { display:flex; align-items:center; gap:5px; font-size:11.5px; font-weight:600; }
+.ld { width:12px; height:12px; border-radius:3px; flex-shrink:0; }
+.legend-note { font-size:10.5px; color:#aaa; }
+
+/* 2カラム */
+.layout {
+  display:grid; grid-template-columns:1fr 1fr; gap:18px;
+  max-width:1160px; margin:0 auto; align-items:start;
+}
+.col-label {
+  text-align:center; font-size:10.5px; font-weight:700;
+  letter-spacing:.1em; color:#777; text-transform:uppercase; padding-bottom:8px;
+}
+
+/* ━━━ 左：シート ━━━ */
+.sheets { display:flex; flex-direction:column; gap:8px; }
+.sheet { background:#fff; border-radius:10px; border:1.5px solid #e0e0e0; overflow:hidden; }
+.sheet-header {
+  padding:7px 12px; font-size:11.5px; font-weight:700;
+  display:flex; align-items:center;
+}
+.badge { font-size:10px; padding:1px 7px; border-radius:10px; background:rgba(0,0,0,.06); margin-left:auto; color:#666; }
+.sh1 .sheet-header { background:#eef6fd; color:#1565c0; border-bottom:1px solid #cce0f5; }
+.sh2 .sheet-header { background:#fdf0f5; color:#ad1457; border-bottom:1px solid #f5c6d8; }
+.sh3 .sheet-header { background:#edf7ee; color:#2e7d32; border-bottom:1px solid #c5e5c7; }
+.sh4 .sheet-header { background:#f7f7f7; color:#666;    border-bottom:1px solid #e8e8e8; }
+
+.blocks { padding:7px 9px; display:flex; flex-direction:column; gap:5px; }
+.block {
+  border-radius:7px; padding:6px 9px;
+  display:flex; align-items:center; gap:8px;
+  border:1.5px solid;
+}
+.block-left { flex:1; min-width:0; }
+.block-title { font-size:11px; font-weight:700; margin-bottom:1px; }
+.block-detail { font-size:9.5px; color:#666; line-height:1.45; }
+.dest-tag {
+  flex-shrink:0; font-size:9.5px; font-weight:700;
+  padding:2px 7px; border-radius:20px; color:#fff;
+  white-space:nowrap;
+}
+/* 5色 */
+.c1 { background:#edf4fd; border-color:#90c4f5; }
+.c2 { background:#f6eef9; border-color:#ce93d8; }
+.c3 { background:#fef5eb; border-color:#ffba6b; }
+.c5 { background:#fdf0f5; border-color:#f48fb1; }
+.c6 { background:#edf7ee; border-color:#86c98a; }
+.bg1 { background:#1976d2; }
+.bg2 { background:#7b1fa2; }
+.bg3 { background:#e65100; }
+.bg5 { background:#c2185b; }
+.bg6 { background:#388e3c; }
+
+/* ━━━ 右：Notion ━━━ */
+.notion-wrap {
+  background:#fff; border-radius:14px; border:2px solid #1a1a2e;
+  padding:18px; position:relative;
+  box-shadow:0 2px 12px rgba(0,0,0,.07);
+}
+.notion-badge {
+  position:absolute; top:-12px; left:50%; transform:translateX(-50%);
+  background:#1a1a2e; color:#fff; font-size:10.5px; font-weight:700;
+  padding:2px 14px; border-radius:20px; white-space:nowrap;
+}
+
+/* ①案件DB */
+.hub-box {
+  border:2px solid #1976d2; border-radius:10px; overflow:hidden;
+  margin-bottom:0;
+}
+.hub-header {
+  background:linear-gradient(135deg,#1565c0,#1976d2);
+  color:#fff; padding:9px 13px;
+  display:flex; align-items:center; gap:7px; font-size:12.5px; font-weight:700;
+}
+.hub-tag {
+  font-size:9.5px; background:rgba(255,255,255,.22);
+  padding:2px 8px; border-radius:20px; margin-left:auto;
+}
+.hub-body { padding:10px 13px; background:#f0f7ff; }
+.hub-desc { font-size:10.5px; color:#444; margin-bottom:8px; }
+
+.chips { display:flex; flex-wrap:wrap; gap:3px; margin-bottom:6px; }
+.chip { font-size:9.5px; padding:2px 7px; border-radius:5px; font-weight:600; }
+.chip-blue  { background:#e3f2fd; color:#1565c0; border:1px solid #90caf9; }
+.chip-ng    { background:#ffebee; color:#c62828; border:1px solid #ef9a9a; }
+.chip-money { background:#fce4ec; color:#ad1457; border:1px solid #f48fb1; }
+.chip-date  { background:#fff8e1; color:#e65100; border:1px solid #ffe082; }
+
+.file-inner {
+  border:1.5px dashed #66bb6a; border-radius:7px;
+  background:#f1faf3; padding:7px 10px; margin-top:7px;
+}
+.file-inner-title {
+  font-size:10px; font-weight:700; color:#388e3c; margin-bottom:3px;
+  display:flex; align-items:center; gap:5px;
+}
+.file-inner-body { font-size:9.5px; color:#555; line-height:1.65; }
+
+/* ━━━ リレーション矢印（T字型） ━━━ */
+.rel-connector {
+  display:flex; flex-direction:column; align-items:center;
+  margin:10px 0 8px;
+}
+.rc-vert-top { width:2px; height:14px; background:#90caf9; }
+.rc-cross {
+  display:flex; width:72%; position:relative;
+  justify-content:space-between; align-items:flex-start;
+}
+.rc-cross::before {
+  content:''; position:absolute; top:0; left:0; right:0;
+  height:2px; background:#90caf9;
+}
+.rc-branch {
+  display:flex; flex-direction:column; align-items:center; gap:0;
+}
+.rc-vert-down { width:2px; height:12px; background:#90caf9; }
+.rc-arrowhead {
+  width:0; height:0;
+  border-left:5px solid transparent;
+  border-right:5px solid transparent;
+  border-top:6px solid #90caf9;
+}
+.rc-rel-lbl {
+  font-size:9px; color:#888; margin-top:4px; font-weight:600; white-space:nowrap;
+}
+
+/* ②③横並び */
+.linked-row { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:12px; }
+.linked-db { border-radius:9px; overflow:hidden; }
+.linked-header { padding:7px 11px; font-size:11px; font-weight:700; display:flex; align-items:center; gap:5px; }
+.linked-body { padding:5px 11px 8px; font-size:9.5px; color:#555; line-height:1.7; }
+.ldb2 { border:1.5px solid #ab47bc; }
+.ldb2 .linked-header { background:#f3e5f5; color:#6a1b9a; border-bottom:1px solid #e1bee7; }
+.ldb3 { border:1.5px solid #ef6c00; }
+.ldb3 .linked-header { background:#fff3e0; color:#bf360c; border-bottom:1px solid #ffe0b2; }
+
+/* ━━━ ビューセクション（5枚、詳細版） ━━━ */
+.view-section {
+  background:#f5fdf8; border:1.5px solid #a5d6a7;
+  border-radius:10px; padding:10px;
+}
+.view-section-label {
+  font-size:10px; font-weight:700; color:#2e7d32;
+  text-align:center; margin-bottom:8px;
+  display:flex; align-items:center; gap:5px; justify-content:center;
+}
+.view-section-label::before,.view-section-label::after {
+  content:''; flex:1; height:1px; background:#a5d6a7;
+}
+.view-grid { display:flex; flex-direction:column; gap:6px; }
+
+.vcard {
+  border-radius:9px; overflow:hidden; border:1.5px solid;
+  display:flex; flex-direction:row; align-items:stretch;
+}
+.vcard-head {
+  display:flex; align-items:center; justify-content:center;
+  padding:0 12px; font-size:10.5px; font-weight:700; color:#fff;
+  flex:0 0 95px; text-align:center; line-height:1.4;
+}
+.vcard-purpose {
+  display:flex; align-items:center;
+  padding:6px 10px; font-size:9px; color:#666; line-height:1.45;
+  border-right:1px dashed #ddd; background:#fafafa;
+  min-width:170px; max-width:170px; font-style:italic; flex-shrink:0;
+}
+.vcard-items {
+  padding:6px 12px; flex:1;
+  display:flex; flex-wrap:wrap; align-items:flex-start; align-content:flex-start;
+  gap:2px 0;
+}
+.vcard-item {
+  font-size:9px; color:#444; line-height:1.4;
+  display:flex; align-items:center; gap:3px;
+  width:100%;
+}
+.vcard-item::before { content:'·'; color:#bbb; flex-shrink:0; }
+.vcard-user {
+  display:flex; align-items:center; justify-content:center;
+  padding:0 10px; font-size:9px; font-weight:700; border-left:1px solid;
+  white-space:nowrap; flex-shrink:0;
+}
+
+/* 各ビューの色 */
+.v-sales  { border-color:#90caf9; }
+.v-sales  .vcard-head { background:#1976d2; }
+.v-sales  .vcard-user { border-color:#cce0f7; color:#1565c0; background:#edf4fd; }
+
+.v-admin  { border-color:#ce93d8; }
+.v-admin  .vcard-head { background:#7b1fa2; }
+.v-admin  .vcard-user { border-color:#e8d0f0; color:#6a1b9a; background:#f6eef9; }
+
+.v-cal    { border-color:#80cbc4; }
+.v-cal    .vcard-head { background:#00796b; }
+.v-cal    .vcard-user { border-color:#c0e5e2; color:#00695c; background:#e8f5f4; }
+
+.v-kanban { border-color:#bcaaa4; }
+.v-kanban .vcard-head { background:#5d4037; }
+.v-kanban .vcard-user { border-color:#d7cbc7; color:#4e342e; background:#f5efee; }
+
+.v-kpi    { border-color:#f48fb1; }
+.v-kpi    .vcard-head { background:#c2185b; }
+.v-kpi    .vcard-user { border-color:#f5c6d8; color:#880e4f; background:#fdf0f5; }
+</style>
+</head>
+<body>
+
+<h1>As-Is → To-Be｜3シートとNotion構造の対応関係</h1>
+<p class="subtitle">同じ色のブロックが同じ移行先を示しています</p>
+
+<!-- 凡例 -->
+<div class="legend">
+  <div class="legend-item"><div class="ld" style="background:#1976d2"></div>① 案件管理DB</div>
+  <div class="legend-item"><div class="ld" style="background:#7b1fa2"></div>② 顧客管理DB</div>
+  <div class="legend-item"><div class="ld" style="background:#e65100"></div>③ タスク管理DB</div>
+  <div class="legend-item"><div class="ld" style="background:#c2185b"></div>⑤ KPIダッシュボード</div>
+  <div class="legend-item"><div class="ld" style="background:#388e3c"></div>⑥ ファイル・議事録管理</div>
+  <span class="legend-note">※④ビュー可視化は①のデータを役割別に表示する新機能</span>
+</div>
+
+<div class="layout">
+
+  <div class="col-label">As-Is｜現行スプレッドシート（3枚）</div>
+  <div class="col-label">To-Be｜Notion ワークスペース</div>
+
+  <!-- ━━━ 左 ━━━ -->
+  <div class="sheets">
+
+    <div class="sheet sh1">
+      <div class="sheet-header">📋 Notion管理① <span class="badge">64列 × 190行</span></div>
+      <div class="blocks">
+        <div class="block c1">
+          <div class="block-left">
+            <div class="block-title">案件情報・ステータス</div>
+            <div class="block-detail">広告番号・媒体・担当者 / 架電後不在 → 査定パス → 訪問予定 → 媒介取得</div>
+          </div>
+          <span class="dest-tag bg1">① 案件DB</span>
+        </div>
+        <div class="block c2">
+          <div class="block-left">
+            <div class="block-title">顧客情報</div>
+            <div class="block-detail">名前・電話・メール・物件種別・エリア・年齢</div>
+          </div>
+          <span class="dest-tag bg2">② 顧客DB</span>
+        </div>
+        <div class="block c5">
+          <div class="block-left">
+            <div class="block-title">集計データ</div>
+            <div class="block-detail">媒体別件数・担当別成績（現状は関数でズレ）</div>
+          </div>
+          <span class="dest-tag bg5">⑤ KPI</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="sheet sh2">
+      <div class="sheet-header">📋 Notion管理② <span class="badge">80列 × 1,397行</span></div>
+      <div class="blocks">
+        <div class="block c1">
+          <div class="block-left">
+            <div class="block-title">売買案件情報・ステータス</div>
+            <div class="block-detail">売主・買主・取引形態・売買金額・賃料 / 契約日調整中 → 契約済 → 決済確定 → 決済終了</div>
+          </div>
+          <span class="dest-tag bg1">① 案件DB</span>
+        </div>
+        <div class="block c3">
+          <div class="block-left">
+            <div class="block-title">法的チェック8項目</div>
+            <div class="block-detail">相続登記・農地・根抵当権・確定測量・越境・融資 等</div>
+          </div>
+          <span class="dest-tag bg3">③ タスクDB</span>
+        </div>
+        <div class="block c5">
+          <div class="block-left">
+            <div class="block-title">集計データ</div>
+            <div class="block-detail">売上・自社利益・成約率・月内決済予定</div>
+          </div>
+          <span class="dest-tag bg5">⑤ KPI</span>
+        </div>
+        <div class="block c6">
+          <div class="block-left">
+            <div class="block-title">書類ステータス</div>
+            <div class="block-detail">請求書・決済明細・役調依頼・契約書依頼</div>
+          </div>
+          <span class="dest-tag bg6">⑥ ファイル</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="sheet sh3">
+      <div class="sheet-header">📋 Notion管理③ <span class="badge">40列 × 908行</span></div>
+      <div class="blocks">
+        <div class="block c1">
+          <div class="block-left">
+            <div class="block-title">事務側ステータス</div>
+            <div class="block-detail">01_マイソク依頼 → 02_契約書依頼 → 03_AB締結済 → 04_BC締結済</div>
+          </div>
+          <span class="dest-tag bg1">① 案件DB</span>
+        </div>
+        <div class="block c3">
+          <div class="block-left">
+            <div class="block-title">事務タスク</div>
+            <div class="block-detail">マイソク・役所調査・契約書類作成・固定資産税・着金依頼</div>
+          </div>
+          <span class="dest-tag bg3">③ タスクDB</span>
+        </div>
+        <div class="block c2">
+          <div class="block-left">
+            <div class="block-title">外部関係者情報</div>
+            <div class="block-detail">司法書士（売側・買側）・家賃保証会社・抹消先</div>
+          </div>
+          <span class="dest-tag bg2">② 顧客DB</span>
+        </div>
+        <div class="block c6">
+          <div class="block-left">
+            <div class="block-title">書類管理</div>
+            <div class="block-detail">AB/BC売契・告知書・売主返送・買主返送</div>
+          </div>
+          <span class="dest-tag bg6">⑥ ファイル</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="sheet sh4">
+      <div class="sheet-header">🗂 Googleドライブ <span class="badge">107GB 散在</span></div>
+      <div class="blocks">
+        <div class="block c6">
+          <div class="block-left">
+            <div class="block-title">案件ファイル一式</div>
+            <div class="block-detail">査定書・契約書・議事録（案件と紐付けなく散在）</div>
+          </div>
+          <span class="dest-tag bg6">⑥ ファイル</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ━━━ 右：Notion ━━━ -->
+  <div class="notion-wrap">
+    <div class="notion-badge">Notion Workspace</div>
+
+    <!-- ① 案件管理DB -->
+    <div class="hub-box">
+      <div class="hub-header">
+        🏠 ① 案件管理DB
+        <span class="hub-tag">3シートのデータが集まる中核</span>
+      </div>
+      <div class="hub-body">
+        <div class="hub-desc">1案件 = 1ページ。管理①②③のすべてのステータス・情報を1本に統合。</div>
+        <div class="chips">
+          <span class="chip chip-blue">架電後不在</span>
+          <span class="chip chip-blue">査定パス</span>
+          <span class="chip chip-blue">訪問予定</span>
+          <span class="chip chip-blue">媒介取得</span>
+          <span class="chip chip-blue">契約日調整中</span>
+          <span class="chip chip-blue">契約済</span>
+          <span class="chip chip-blue">決済終了</span>
+          <span class="chip chip-ng">本確後NG</span>
+          <span class="chip chip-ng">案件化不可</span>
+        </div>
+        <div class="chips">
+          <span class="chip chip-money">売買金額</span>
+          <span class="chip chip-money">自社利益</span>
+          <span class="chip chip-date">媒介取得日</span>
+          <span class="chip chip-date">決済予定日</span>
+        </div>
+        <div class="file-inner">
+          <div class="file-inner-title">
+            <span style="background:#388e3c;color:#fff;padding:1px 6px;border-radius:10px;font-size:9.5px;">⑥ ファイル・議事録</span>
+            案件ページ内に格納
+          </div>
+          <div class="file-inner-body">
+            📎 査定書・契約書・議事録（Googleドライブから移行）<br>
+            💬 コメント・メンション（ChatWork通知の代替）
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- T字コネクタ -->
+    <div class="rel-connector">
+      <div class="rc-vert-top"></div>
+      <div class="rc-cross">
+        <div class="rc-branch">
+          <div class="rc-vert-down"></div>
+          <div class="rc-arrowhead"></div>
+          <div class="rc-rel-lbl">多対多</div>
+        </div>
+        <div class="rc-branch">
+          <div class="rc-vert-down"></div>
+          <div class="rc-arrowhead"></div>
+          <div class="rc-rel-lbl">1対多</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ②③ -->
+    <div class="linked-row">
+      <div class="linked-db ldb2">
+        <div class="linked-header">👤 ② 顧客管理DB</div>
+        <div class="linked-body">
+          名前・電話・メール・属性<br>
+          <span style="color:#7b1fa2;font-weight:600;">司法書士等の外部関係者も登録</span><br>
+          ← 管理①顧客情報 / 管理③司法書士
+        </div>
+      </div>
+      <div class="linked-db ldb3">
+        <div class="linked-header">✅ ③ タスク管理DB</div>
+        <div class="linked-body">
+          マイソク・役所調査・契約書類<br>
+          <span style="color:#e65100;font-weight:600;">法的チェック8項目（管理②から）</span><br>
+          ← 管理③事務タスク / 管理②法的確認
+        </div>
+      </div>
+    </div>
+
+    <!-- ビュー5枚（詳細版） -->
+    <div class="view-section">
+      <div class="view-section-label">↓ ①案件DBのデータを役割別に表示（実際に使う画面）↓</div>
+      <div class="view-grid">
+
+        <!-- 営業ビュー -->
+        <div class="vcard v-sales">
+          <div class="vcard-head">📋 営業ビュー</div>
+          <div class="vcard-purpose">担当案件の進捗・数字を一覧管理。今どの案件がどのステータスでいつ決済かを把握する。</div>
+          <div class="vcard-items">
+            <div class="vcard-item">担当案件リスト</div>
+            <div class="vcard-item">買主・売主名</div>
+            <div class="vcard-item">広告媒体・問い合わせ元</div>
+            <div class="vcard-item">売買金額・自社利益</div>
+            <div class="vcard-item">媒介取得日・決済予定日</div>
+            <div class="vcard-item">ステータス更新・案件登録</div>
+          </div>
+          <div class="vcard-user">👤 営業スタッフ</div>
+        </div>
+
+        <!-- 事務ビュー -->
+        <div class="vcard v-admin">
+          <div class="vcard-head">🗂 事務ビュー</div>
+          <div class="vcard-purpose">マイソクから契約・決済まで書類・タスクの進捗を管理。何がどこまで完了しているかを確認する。</div>
+          <div class="vcard-items">
+            <div class="vcard-item">マイソク・AB/BC締結状況</div>
+            <div class="vcard-item">契約書・書類進捗</div>
+            <div class="vcard-item">司法書士・決済情報</div>
+            <div class="vcard-item">着金確認・決済日</div>
+            <div class="vcard-item">タスク完了チェック</div>
+            <div class="vcard-item">役所調査・固定資産税状況</div>
+          </div>
+          <div class="vcard-user">👤 事務スタッフ</div>
+        </div>
+
+        <!-- カレンダー -->
+        <div class="vcard v-cal">
+          <div class="vcard-head">📅 カレンダー</div>
+          <div class="vcard-purpose">今月・来月の決済日・契約日を月次で一覧把握。決済の重なりを避け、書類準備のスケジュールを立てる。</div>
+          <div class="vcard-items">
+            <div class="vcard-item">月内決済予定日</div>
+            <div class="vcard-item">契約日・重要期日</div>
+            <div class="vcard-item">担当者名・案件名</div>
+            <div class="vcard-item">案件名クリック→詳細へ</div>
+          </div>
+          <div class="vcard-user">👤 全スタッフ</div>
+        </div>
+
+        <!-- カンバン -->
+        <div class="vcard v-kanban">
+          <div class="vcard-head">▦ カンバン</div>
+          <div class="vcard-purpose">全案件をステータス別に列で並べて進捗を視覚化。止まっている案件の発見と、全体の流れを俯瞰する。</div>
+          <div class="vcard-items">
+            <div class="vcard-item">ステータス別案件カード</div>
+            <div class="vcard-item">ステータスごとの件数</div>
+            <div class="vcard-item">担当者で絞り込み</div>
+            <div class="vcard-item">D&Dでステータス変更</div>
+          </div>
+          <div class="vcard-user">👤 営業・管理者</div>
+        </div>
+
+        <!-- KPI -->
+        <div class="vcard v-kpi">
+          <div class="vcard-head">📊 ⑤ KPI</div>
+          <div class="vcard-purpose">媒体効果・成約率・売上を自動集計で確認。数字の根拠を持って意思決定・振り返りができる。</div>
+          <div class="vcard-items">
+            <div class="vcard-item">媒体別問い合わせ数</div>
+            <div class="vcard-item">媒介取得率・成約率</div>
+            <div class="vcard-item">月次売上・平均売買金額</div>
+            <div class="vcard-item">決済件数（月別推移）</div>
+            <div class="vcard-item">担当別成績</div>
+            <div class="vcard-item">自動集計（手入力不要）</div>
+          </div>
+          <div class="vcard-user">👤 代表・管理者</div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+</div>
+</body>
+</html>
